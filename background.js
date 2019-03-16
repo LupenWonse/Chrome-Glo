@@ -12,9 +12,7 @@ var addToFirstBoard = function (details){
     console.log(details.selectionText);
 }
 
-chrome.contextMenus.create({"title" : "Add to GloBoard", "contexts" : ["selection"], onclick : addToFirstBoard}, function (){
-        console.log("Context menu added");
-});
+
 
 chrome.webRequest.onBeforeRequest.addListener(callback,{
         urls: [
@@ -29,10 +27,26 @@ function isUserLoggedIn() {
         if (result.access_token) {
             console.log('User is logged in');
             console.log(result.access_token);
-            return true;
+            doLogIn();
+        } else {
+            doLogOut();
         }
-        return false;
     });
 }
 
-console.log(isUserLoggedIn());
+function doLogIn() {
+    console.log("Enabling All Context Menus");
+    chrome.contextMenus.removeAll();
+    chrome.contextMenus.create({"title" : "Add to Glo Board", "contexts" : ["selection"], onclick : addToFirstBoard});
+}
+
+function doLogOut() {
+    console.log("Disabling Context Menus");
+    chrome.contextMenus.removeAll();
+    chrome.contextMenus.create({"title" : "Login to Glo Board", "onclick" : function () {
+        chrome.tabs.create({url:'https://app.gitkraken.com/oauth/authorize?response_type=code&client_id=aajdmgmjv5myynpbkgcg&scope=board:write&state=qwert12345'});
+        }
+    });
+}
+
+isUserLoggedIn();
