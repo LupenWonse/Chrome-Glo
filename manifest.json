@@ -7,16 +7,11 @@
         "default_title": "Login to Glo Boards",
         "default_popup": "login.html"
     },
-     "permissions" : ["background","identity","webRequest", "webRequestBlocking", "*://app.gitkraken.com/*","*://api.gitkraken.com/*","tabs","storage","contextMenus"],
+     "permissions" : ["background","webRequest", "*://app.gitkraken.com/*","*://api.gitkraken.com/*","tabs","storage","contextMenus"],
     "background": {
       "scripts": [
         "background.js"
       ],
       "persistent": true
-    },
-     "key" : "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyV5BhFyemFO0WMRlt2ffyQ2+UH434aKylfZa/0Klmnddpmg7bGTtW4Y2phsASYnet5BIfIG37KPmAgsYm+0ld0Zckqux9OJ6rFh6APgdgXKu+TcC6Gvo8bVmdr2YCPxBK5NFhcrkGeU5ot8TF4yFEMmFb/da9QIt3PhlJjl32CeusRkSwvKCmtDjhVo0iES1ReGMYeJXxtlBAJruNPEVgOiXo0Vpf/AEhalLuXIVs09mMY2ftWaX0bymjUCUhoGHqBFp4cdMFVhVvgW6wYQkrSBrYzFAkJu/pK0fbyXJ4H7HNo8ti6sMKfluBndSzd36LVS4iLbs1kuQ7OSRYckDqwIDAQAB",
-     "oauth2" : {
-         "client_id" : "645548491999-m3bqfk5r90leo2aakjrkdiesitt36bmi.apps.googleusercontent.com",
-         "scopes" : ["email"]
-     }
+    }
   }

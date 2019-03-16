@@ -4,7 +4,7 @@ var callback = function (details) {
     window.location.href = 'chrome-extension://index.html';
     
     if(params.has('code')){
-        chrome.tabs.update({url: 'chrome-extension://jgfikdjkeepfomjoeoojhjgnkpakcdmp/userIdentified.html' + "?code=" + params.get('code')});
+        chrome.tabs.update({url: '/userIdentified.html' + "?code=" + params.get('code')});
     }    
 }
 
@@ -23,16 +23,12 @@ chrome.webRequest.onBeforeRequest.addListener(callback,{
     }
         );
 
-// OnClick Listener for the browserAction button
-//  chrome.browserAction.onClicked.addListener(function() {
-//    chrome.tabs.create({url: 'index.html'});
-//  });
-
 // Check for user authentication
 function isUserLoggedIn() {
     chrome.storage.local.get(['access_token'], function(result){
-        if (result) {
+        if (result.access_token) {
             console.log('User is logged in');
+            console.log(result.access_token);
             return true;
         }
         return false;
