@@ -37,7 +37,10 @@ function isUserLoggedIn() {
 function doLogIn() {
     console.log("Enabling All Context Menus");
     chrome.contextMenus.removeAll();
-    chrome.contextMenus.create({"title" : "Add to Glo Board", "contexts" : ["selection"], onclick : addToFirstBoard});
+
+    var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
+    chrome.contextMenus.create({"title" : "Create card from current page", "contexts" : ["all"], "parentId" : id, "onclick" : addCard});
+    chrome.contextMenus.create({"title" : "Add to Glo Board", "contexts" : ["selection"], "parentId" : id, "onclick" : addCard});
 }
 
 function doLogOut() {
@@ -49,4 +52,40 @@ function doLogOut() {
     });
 }
 
-isUserLoggedIn();
+var addCard = function () {
+    chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
+        console.log(tab);
+        var tabTitle = tab[0].title;
+        var tabUrl = tab[0].url;
+        
+         var data = JSON.stringify({
+        "name": tabTitle,
+        "position": 0,
+        "column_id": "5af065eb4f33b715001428c3"
+        });
+
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = false;
+
+        xhr.addEventListener("readystatechange", function () {
+          if (this.readyState === 4) {
+            console.log(this.responseText);
+          }
+        });
+
+        xhr.open("POST", "https://gloapi.gitkraken.com/v1/glo/boards/" + boardId + "/cards/?access_token=" + accessToken);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.setRequestHeader("Postman-Token", "98beb5ef-eff6-4980-92cd-66ca9834aea2");
+
+        xhr.send(data); 
+    });
+   
+    
+    isUserLoggedIn();
+    var boardId = "5af065e94f33b715001428bd";
+    var columnId = "5af065eb4f33b715001428c3";
+    var accessToken = "5ffdfd920840f76d41b58d377c88850079311e2b";
+    
+   
+}
