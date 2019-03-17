@@ -4,7 +4,7 @@ function isUserLoggedIn() {
         if (result.access_token) {
             console.log('User is logged in');
             accessToken = result.access_token;
-            doLogIn();
+            loadBoards();
         } else {
             console.log('User is not logged in');
             doLogOut();
@@ -33,13 +33,31 @@ function redirectToExtension (details) {
 function doLogIn() {
     console.log("Enabling All Context Menus");
     
-    loadBoards();
-    
+    loadBoards().then(function(){
+         chrome.contextMenus.removeAll();
+
+        var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
+        chrome.contextMenus.create({"title" : "Create card from current page", "contexts" : ["all"], "parentId" : id, "onclick" : addCard});
+        chrome.contextMenus.create({"title" : "Add to Glo Board", "contexts" : ["selection"], "parentId" : id, "onclick" : addCard});
+    })
+}
+
+function createMenus() {
+    console.log("Enabling All Context Menus");
     chrome.contextMenus.removeAll();
 
     var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
-    chrome.contextMenus.create({"title" : "Create card from current page", "contexts" : ["all"], "parentId" : id, "onclick" : addCard});
-    chrome.contextMenus.create({"title" : "Add to Glo Board", "contexts" : ["selection"], "parentId" : id, "onclick" : addCard});
+//    chrome.contextMenus.create({"title" : "Create card from current page", "contexts" : ["all"], "parentId" : id, "onclick" : addCard});
+//    chrome.contextMenus.create({"title" : "Add to Glo Board", "contexts" : ["selection"], "parentId" : id, "onclick" : addCard});
+    chrome.contextMenus.create({"title" : boards[0].name, "type" : "normal","parentId" : id,"contexts" : ["all"],"enabled":false});
+    chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
+    for (let column of boards[0].columns){
+        console.log(column);
+//        chrome.contextMenus.create({"title" : column.name, "type" : "normal","parentId" : id,"contexts" : ["all"],"enabled":false});
+        chrome.contextMenus.create({"title" : "Create New Card in " + column.name, "type" : "normal","parentId" : id,"contexts" : ["all"]});
+//        chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
+    }
+    
 }
 
 function doLogOut() {
@@ -54,17 +72,22 @@ function doLogOut() {
 // ======================
 // Context Menu Callbacks
 
-var addCard = function () {
+var addCard = function (click) {
+    var card = {};
+    card.description = {};
+    card.position = 0;
+    card.column_id = columnId;
+    if (click.selectionText){
+        card.name = click.selectionText;
+    }
+    
+    
     chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
         console.log(tab);
-        var tabTitle = tab[0].title;
+        card.description.text = " \n Card created by Chrome Glo";
         var tabUrl = tab[0].url;
         
-         var data = JSON.stringify({
-        "name": tabTitle,
-        "position": 0,
-        "column_id": "5af065eb4f33b715001428c3"
-        });
+        var data = JSON.stringify(card);
 
         var xhr = new XMLHttpRequest();
         xhr.withCredentials = false;
@@ -99,7 +122,16 @@ function loadBoards() {
     xhr.addEventListener("readystatechange", function () {
       if (this.readyState === 4) {
           boards = JSON.parse(this.responseText);
-          chrome.storage.local.set({'boards' : boards});
+          
+          // TODO Replace this with defaults
+          console.log(boards);
+          console.log(boards[0].columns);
+          console.log(boards[0].columns[0].id);
+          boardId = boards[0].id;
+          columnId = boards[0].columns[0].id;
+          chrome.storage.local.set({'boards' : boards}, function(){
+              createMenus();
+          });
       }
     });
 
@@ -114,8 +146,8 @@ function loadBoards() {
 
 // Start extension
     const clientId = "aajdmgmjv5myynpbkgcg";
-    var boardId = "5af065e94f33b715001428bd";
-    var columnId = "5af065eb4f33b715001428c3";
+    var boardId = "";
+    var columnId = "";
     var accessToken = null;
     var boards = null;
 
