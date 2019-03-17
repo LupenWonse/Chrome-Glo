@@ -1,4 +1,24 @@
-var callback = function (details) {
+// Check for user authentication
+function isUserLoggedIn() {
+    chrome.storage.local.get(['access_token'], function(result){
+        if (result.access_token) {
+            console.log('User is logged in');
+            accessToken = result.access_token;
+            doLogIn();
+        } else {
+            console.log('User is not logged in');
+            doLogOut();
+        }
+    });
+}
+
+chrome.webRequest.onBeforeRequest.addListener(redirectToExtension,{
+        urls: [
+            "*://app.gitkraken.com/*"
+        ]
+    });
+
+function redirectToExtension (details) {
     const url = new URL(details.url);
     const params = new URLSearchParams(url.search);
     window.location.href = 'chrome-extension://index.html';
@@ -8,34 +28,13 @@ var callback = function (details) {
     }    
 }
 
-var addToFirstBoard = function (details){
-    console.log(details.selectionText);
-}
-
-
-
-chrome.webRequest.onBeforeRequest.addListener(callback,{
-        urls: [
-            "*://app.gitkraken.com/*"
-        ]
-    }
-        );
-
-// Check for user authentication
-function isUserLoggedIn() {
-    chrome.storage.local.get(['access_token'], function(result){
-        if (result.access_token) {
-            console.log('User is logged in');
-            console.log(result.access_token);
-            doLogIn();
-        } else {
-            doLogOut();
-        }
-    });
-}
-
+// =========
+// Initialization based on auth state
 function doLogIn() {
     console.log("Enabling All Context Menus");
+    
+    loadBoards();
+    
     chrome.contextMenus.removeAll();
 
     var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
@@ -47,10 +46,13 @@ function doLogOut() {
     console.log("Disabling Context Menus");
     chrome.contextMenus.removeAll();
     chrome.contextMenus.create({"title" : "Login to Glo Board", "onclick" : function () {
-        chrome.tabs.create({url:'https://app.gitkraken.com/oauth/authorize?response_type=code&client_id=aajdmgmjv5myynpbkgcg&scope=board:write&state=qwert12345'});
+        chrome.tabs.create({url:'https://app.gitkraken.com/oauth/authorize?response_type=code&client_id' + clientId + '=&scope=board:write&state=qwert12345'});
         }
     });
 }
+
+// ======================
+// Context Menu Callbacks
 
 var addCard = function () {
     chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
@@ -80,12 +82,43 @@ var addCard = function () {
 
         xhr.send(data); 
     });
+}
    
-    
-    isUserLoggedIn();
+var addToFirstBoard = function (details){
+    console.log(details.selectionText);
+}
+
+// ==========
+// Basic API calls
+
+function loadBoards() {
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === 4) {
+          boards = JSON.parse(this.responseText);
+          chrome.storage.local.set({'boards' : boards});
+      }
+    });
+
+    xhr.open("GET", "https://gloapi.gitkraken.com/v1/glo/boards?access_token=" + accessToken + "&fields[]=name&fields[]=columns");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.setRequestHeader("Postman-Token", "0978eded-d46d-4397-b16e-c2a8692763ea");
+
+    xhr.send(data);
+}    
+
+
+// Start extension
+    const clientId = "aajdmgmjv5myynpbkgcg";
     var boardId = "5af065e94f33b715001428bd";
     var columnId = "5af065eb4f33b715001428c3";
-    var accessToken = "5ffdfd920840f76d41b58d377c88850079311e2b";
-    
+    var accessToken = null;
+    var boards = null;
+
+    isUserLoggedIn(); // If yes this will load the boards
+
    
-}
