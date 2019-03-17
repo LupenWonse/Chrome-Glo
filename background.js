@@ -54,7 +54,7 @@ function createMenus() {
     for (let column of boards[0].columns){
         console.log(column);
 //        chrome.contextMenus.create({"title" : column.name, "type" : "normal","parentId" : id,"contexts" : ["all"],"enabled":false});
-        chrome.contextMenus.create({"title" : "Create New Card in " + column.name, "type" : "normal","parentId" : id,"contexts" : ["all"]});
+        chrome.contextMenus.create({"title" : "Create New Card in " + column.name, "type" : "normal","parentId" : id,"id" : column.id, "contexts" : ["all"],"onclick" : addCard});
 //        chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
     }
     
@@ -73,10 +73,12 @@ function doLogOut() {
 // Context Menu Callbacks
 
 var addCard = function (click) {
+    console.log("Click");
+    console.log(click);
     var card = {};
     card.description = {};
     card.position = 0;
-    card.column_id = columnId;
+    card.column_id = click.menuItemId;
     if (click.selectionText){
         card.name = click.selectionText;
     }
