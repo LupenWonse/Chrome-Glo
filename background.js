@@ -47,15 +47,10 @@ function createMenus() {
     chrome.contextMenus.removeAll();
 
     var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
-//    chrome.contextMenus.create({"title" : "Create card from current page", "contexts" : ["all"], "parentId" : id, "onclick" : addCard});
-//    chrome.contextMenus.create({"title" : "Add to Glo Board", "contexts" : ["selection"], "parentId" : id, "onclick" : addCard});
     chrome.contextMenus.create({"title" : boards[0].name, "type" : "normal","parentId" : id,"contexts" : ["all"],"enabled":false});
     chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
     for (let column of boards[0].columns){
-        console.log(column);
-//        chrome.contextMenus.create({"title" : column.name, "type" : "normal","parentId" : id,"contexts" : ["all"],"enabled":false});
         chrome.contextMenus.create({"title" : "Create New Card in " + column.name, "type" : "normal","parentId" : id,"id" : column.id, "contexts" : ["all"],"onclick" : addCard});
-//        chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
     }
     
 }
@@ -73,30 +68,57 @@ function doLogOut() {
 // Context Menu Callbacks
 
 var addCard = function (click) {
-    console.log("Click");
-    console.log(click);
-    var card = {};
-    card.description = {};
-    card.position = 0;
-    card.column_id = click.menuItemId;
-    if (click.selectionText){
-        card.name = click.selectionText;
-    }
     
-    
-    chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
-        console.log(tab);
-        card.description.text = " \n Card created by Chrome Glo";
-        var tabUrl = tab[0].url;
+    chrome.tabs.captureVisibleTab(undefined,{"format" : 'png'},function(dataURL){
+        chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
+            // Set card properties
+            var card = {};
+            card.description = {};
+            card.position = 0;
+            card.column_id = click.menuItemId;
+            
+            if (click.selectionText){
+                card.name = click.selectionText;
+            } else {
+                card.name = chrome.tabs.getCurrent
+            }
+            card.description.text = " \n Card created by Chrome Glo \n" + tab[0].url;
+            //var tabUrl = tab[0].url;
         
-        var data = JSON.stringify(card);
+            var data = JSON.stringify(card);
 
-        var xhr = new XMLHttpRequest();
-        xhr.withCredentials = false;
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = false;
+            xhr.addEventListener("readystatechange", function () {
+                
+                if (this.readyState === 4) {
+                    console.log(this.responseText);
+                    var responseData = JSON.parse(this.responseText);
+                    var createdCardId = responseData.id;
 
-        xhr.addEventListener("readystatechange", function () {
-          if (this.readyState === 4) {
-            console.log(this.responseText);
+                    var xhr = new XMLHttpRequest();
+
+                    xhr.addEventListener("readystatechange", function () {
+                      if (this.readyState === 4) {
+                        var attachmentData = JSON.parse(this.responseText);
+                          console.log(this.responseText);
+                          console.log (attachmentData);
+                          addComment(boardId, createdCardId, attachmentData.id);
+                      }
+                    });
+
+                    xhr.open("POST", "https://gloapi.gitkraken.com/v1/glo/boards/" + boardId + "/cards/5c8e7739c68810000ff73de2/attachments?access_token=" + accessToken);
+                    xhr.setRequestHeader("cache-control", "no-cache");
+                    xhr.setRequestHeader("Postman-Token", "39e902ee-3568-44c6-967f-a1563e26ff62");
+
+// Generate blob from the screenshot dataURL              
+                    fetch(dataURL)
+                    .then(res => res.blob())
+                    .then(blob => {
+                        var formData = new FormData();
+                        formData.append("file",blob);
+                        xhr.send(formData);
+                });
           }
         });
 
@@ -104,9 +126,16 @@ var addCard = function (click) {
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("cache-control", "no-cache");
         xhr.setRequestHeader("Postman-Token", "98beb5ef-eff6-4980-92cd-66ca9834aea2");
-
         xhr.send(data); 
+        
+        
+        
+        });
     });
+}
+
+var addComment = function(boardId, cardId, comment){
+    console.log("Adding Comment : To Board : " + boardId + " to Card: " + cardId + " : " + comment);
 }
    
 var addToFirstBoard = function (details){
