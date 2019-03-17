@@ -103,7 +103,7 @@ var addCard = function (click) {
                         var attachmentData = JSON.parse(this.responseText);
                           console.log(this.responseText);
                           console.log (attachmentData);
-                          addComment(boardId, createdCardId, attachmentData.id);
+                          addComment(boardId, createdCardId, "![image]("+attachmentData.url+")");
                       }
                     });
 
@@ -136,6 +136,25 @@ var addCard = function (click) {
 
 var addComment = function(boardId, cardId, comment){
     console.log("Adding Comment : To Board : " + boardId + " to Card: " + cardId + " : " + comment);
+    
+    var commentData = {text: comment};
+    
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = false;
+    xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            var attachmentData = JSON.parse(this.responseText);
+            console.log("Adding Comment:");
+            console.log(this.responseText);
+        }
+    });
+    
+        xhr.open("POST", "https://gloapi.gitkraken.com/v1/glo/boards/" + boardId + "/cards/" + cardId+ "/comments/?access_token=" + accessToken);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.setRequestHeader("Postman-Token", "98beb5ef-eff6-4980-92cd-66ca9834aea2");
+    console.log(commentData);
+        xhr.send(JSON.stringify(commentData));
 }
    
 var addToFirstBoard = function (details){
