@@ -1,3 +1,21 @@
+var userIdentificationCode;
+var loginTabId;
+
+
+chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse){
+        if (request.type == "startLogin"){
+            chrome.tabs.create({url:'https://app.gitkraken.com/oauth/authorize?response_type=code&client_id=aajdmgmjv5myynpbkgcg&scope=board:write&state=qwert12345'},function(tab){
+                loginTabId = tab.id;
+                console.log("Created Tab : " + tab.id);
+            });
+        } else {
+            console.log("Message failed");
+            console.log(request);
+        }
+    }
+)
+
 // Check for user authentication
 function isUserLoggedIn() {
     chrome.storage.local.get(['access_token'], function(result){
@@ -24,7 +42,12 @@ function redirectToExtension (details) {
     window.location.href = 'chrome-extension://index.html';
     
     if(params.has('code')){
-        chrome.tabs.update({url: '/userIdentified.html' + "?code=" + params.get('code')});
+        userIdentificationCode = params.get('code');
+        getAccessToken(params.get('code'));
+        chrome.tabs.remove(loginTabId, function(){
+            console.log("Removing Tab : " + loginTabId);
+            loginTabId = undefined;
+        });
     }    
 }
 
@@ -235,3 +258,28 @@ function loadBoards() {
     isUserLoggedIn(); // If yes this will load the boards
 
    
+function getAccessToken (code){
+        // Build Http Request For Access Token
+        const Http = new XMLHttpRequest();
+        const httpUrl='https://api.gitkraken.com/oauth/access_token';
+        var data = "grant_type=authorization_code&client_id=aajdmgmjv5myynpbkgcg&client_secret=dc9ejktj6c4535o5bpzcoxlcs1nfzjjqqss0oqu0&code=" + code;
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+            console.log(JSON.parse(this.responseText));
+            var results = JSON.parse(this.responseText);
+            chrome.storage.local.set(results, function(){
+                chrome.storage.local.get(['access_token'], function(result){
+                    console.log ("Result : " + result.access_token);
+                })
+            });
+        }
+        });
+
+        xhr.open("POST", "https://api.gitkraken.com/oauth/access_token?grant_type=authorization_code");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.setRequestHeader("Postman-Token", "6c9895b2-01cb-456c-9871-8dca069caf1f");
+        xhr.send(data);
+}
