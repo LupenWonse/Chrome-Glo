@@ -100,7 +100,7 @@ var addCard = function (click) {
             } else {
                 card.name = chrome.tabs.getCurrent
             }
-            card.description.text = " \n Card created by Chrome Glo \n" + tab[0].url;
+            card.description.text = " \n Created by Chrome Glo \n" + tab[0].url;
             //var tabUrl = tab[0].url;
         
             var data = JSON.stringify(card);
@@ -121,7 +121,10 @@ var addCard = function (click) {
                         var attachmentData = JSON.parse(this.responseText);
                           console.log(this.responseText);
                           console.log (attachmentData);
-                          addComment(boardId, createdCardId, '![image](' + attachmentData.url + ')');
+                          var comment = 'Card created by Glo Chrome extension \n';
+                          comment = comment + '[Original web-page](' + tab[0].url +')\n';
+                          comment = comment + '![image](' + attachmentData.url + ')';
+                          addComment(boardId, createdCardId, comment);
                       }
                     });
 
