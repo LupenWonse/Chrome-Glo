@@ -67,6 +67,24 @@ function doLogOut() {
 // ======================
 // Context Menu Callbacks
 
+
+
+
+function convertDataURIToBinary(dataURI) {
+  var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+  var base64 = dataURI.substring(base64Index);
+  var raw = window.atob(base64);
+  var rawLength = raw.length;
+  var array = new Uint8Array(rawLength);
+
+  for(i = 0; i < rawLength; i++) {
+    array[i] = raw.charCodeAt(i);
+  }
+  return array;
+}
+
+
+
 var addCard = function (click) {
     
     chrome.tabs.captureVisibleTab(undefined,{"format" : 'png'},function(dataURL){
@@ -103,24 +121,63 @@ var addCard = function (click) {
                         var attachmentData = JSON.parse(this.responseText);
                           console.log(this.responseText);
                           console.log (attachmentData);
-                          addComment(boardId, createdCardId, "![image]("+attachmentData.url+")");
+                          addComment(boardId, createdCardId, '![image](' + attachmentData.url + ')');
                       }
                     });
 
-                    xhr.open("POST", "https://gloapi.gitkraken.com/v1/glo/boards/" + boardId + "/cards/5c8e7739c68810000ff73de2/attachments?access_token=" + accessToken);
+                    xhr.open("POST", "https://gloapi.gitkraken.com/v1/glo/boards/" + boardId + "/cards/"+createdCardId+"/attachments?access_token=" + accessToken);
                     xhr.setRequestHeader("cache-control", "no-cache");
                     xhr.setRequestHeader("Postman-Token", "39e902ee-3568-44c6-967f-a1563e26ff62");
 
-// Generate blob from the screenshot dataURL              
+// Generate blob from the screenshot dataURL
+                    
+//                    var arr = convertDataURIToBinary(dataURL);
+                    // convert to blob and show as image
+//                    var blob = new Blob([arr], { type: 'image/png' }); 
+//                    var img = document.createElement('img');
+//                    img.src = window.URL.createObjectURL(blob);
+//                    document.body.appendChild(img);
+                    
+                        // convert base64 to raw binary data held in a string
+                    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+                    var byteString = atob(dataURL.split(',')[1]);
+
+                    // separate out the mime component
+                    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
+
+                    // write the bytes of the string to an ArrayBuffer
+                    var ab = new ArrayBuffer(byteString.length);
+                    var ia = new Uint8Array(ab);
+                    for (var i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                    }
+
+                    //Old Code
+                    //write the ArrayBuffer to a blob, and you're done
+                    //var bb = new BlobBuilder();
+                    //bb.append(ab);
+                    //return bb.getBlob(mimeString);
+
+                    //New Code
+                    var blob =  new Blob([ab], {type: mimeString});
+                    
+                    console.log(blob);
                     fetch(dataURL)
                     .then(res => res.blob())
                     .then(blob => {
+                        console.log("BLOB");
+                        console.log(blob);
                         var formData = new FormData();
-                        formData.append("file",blob);
+                        formData.append("test.png",blob,"test.png");
                         xhr.send(formData);
+                    });
+//                    var formData = new FormData();
+//                    formData.append("test.png",blob,"test.png");
+//                    xhr.send(formData);
+                }
                 });
-          }
-        });
+//                    }
+//        });
 
         xhr.open("POST", "https://gloapi.gitkraken.com/v1/glo/boards/" + boardId + "/cards/?access_token=" + accessToken);
         xhr.setRequestHeader("Content-Type", "application/json");
