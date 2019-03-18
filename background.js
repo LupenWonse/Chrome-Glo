@@ -130,37 +130,7 @@ var addCard = function (click) {
                     xhr.setRequestHeader("Postman-Token", "39e902ee-3568-44c6-967f-a1563e26ff62");
 
 // Generate blob from the screenshot dataURL
-                    
-//                    var arr = convertDataURIToBinary(dataURL);
-                    // convert to blob and show as image
-//                    var blob = new Blob([arr], { type: 'image/png' }); 
-//                    var img = document.createElement('img');
-//                    img.src = window.URL.createObjectURL(blob);
-//                    document.body.appendChild(img);
-                    
-                        // convert base64 to raw binary data held in a string
-                    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
-                    var byteString = atob(dataURL.split(',')[1]);
-
-                    // separate out the mime component
-                    var mimeString = dataURL.split(',')[0].split(':')[1].split(';')[0];
-
-                    // write the bytes of the string to an ArrayBuffer
-                    var ab = new ArrayBuffer(byteString.length);
-                    var ia = new Uint8Array(ab);
-                    for (var i = 0; i < byteString.length; i++) {
-                    ia[i] = byteString.charCodeAt(i);
-                    }
-
-                    //Old Code
-                    //write the ArrayBuffer to a blob, and you're done
-                    //var bb = new BlobBuilder();
-                    //bb.append(ab);
-                    //return bb.getBlob(mimeString);
-
-                    //New Code
-                    var blob =  new Blob([ab], {type: mimeString});
-                    
+                                        
                     console.log(blob);
                     fetch(dataURL)
                     .then(res => res.blob())
@@ -171,21 +141,14 @@ var addCard = function (click) {
                         formData.append("test.png",blob,"test.png");
                         xhr.send(formData);
                     });
-//                    var formData = new FormData();
-//                    formData.append("test.png",blob,"test.png");
-//                    xhr.send(formData);
                 }
                 });
-//                    }
-//        });
 
         xhr.open("POST", "https://gloapi.gitkraken.com/v1/glo/boards/" + boardId + "/cards/?access_token=" + accessToken);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("cache-control", "no-cache");
         xhr.setRequestHeader("Postman-Token", "98beb5ef-eff6-4980-92cd-66ca9834aea2");
         xhr.send(data); 
-        
-        
         
         });
     });
