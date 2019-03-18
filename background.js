@@ -89,6 +89,9 @@ var addCard = function (click) {
     
     chrome.tabs.captureVisibleTab(undefined,{"format" : 'png'},function(dataURL){
         chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
+            // Image source to be captured
+            var imageSource;
+            
             // Set card properties
             var card = {};
             card.description = {};
@@ -98,8 +101,15 @@ var addCard = function (click) {
             if (click.selectionText){
                 card.name = click.selectionText;
             } else {
-                card.name = chrome.tabs.getCurrent
+                card.name = tab[0].title;
             }
+            
+            if (click.mediaType == "image") {
+                imageSource = click.srcUrl; 
+            } else {
+                imageSource = dataURL;
+            }
+            
             card.description.text = " \n Created by Chrome Glo \n" + tab[0].url;
             //var tabUrl = tab[0].url;
         
@@ -133,7 +143,7 @@ var addCard = function (click) {
                     xhr.setRequestHeader("Postman-Token", "39e902ee-3568-44c6-967f-a1563e26ff62");
 
 // Generate blob from the screenshot dataURL
-                    fetch(dataURL)
+                    fetch(imageSource)
                     .then(res => res.blob())
                     .then(blob => {
                         console.log("BLOB");
