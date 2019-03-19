@@ -53,18 +53,6 @@ function redirectToExtension (details) {
 
 // =========
 // Initialization based on auth state
-function doLogIn() {
-    console.log("Enabling All Context Menus");
-    
-    loadBoards().then(function(){
-         chrome.contextMenus.removeAll();
-
-        var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
-        chrome.contextMenus.create({"title" : "Create card from current page", "contexts" : ["all"], "parentId" : id, "onclick" : addCard});
-        chrome.contextMenus.create({"title" : "Add to Glo Board", "contexts" : ["selection"], "parentId" : id, "onclick" : addCard});
-    })
-}
-
 function createMenus() {
     console.log("Enabling All Context Menus");
     chrome.contextMenus.removeAll();
@@ -270,9 +258,7 @@ function getAccessToken (code){
             console.log(JSON.parse(this.responseText));
             var results = JSON.parse(this.responseText);
             chrome.storage.local.set(results, function(){
-                chrome.storage.local.get(['access_token'], function(result){
-                    console.log ("Result : " + result.access_token);
-                })
+                
             });
         }
         });
