@@ -258,7 +258,7 @@ function getAccessToken (code){
             console.log(JSON.parse(this.responseText));
             var results = JSON.parse(this.responseText);
             chrome.storage.local.set(results, function(){
-                
+                isUserLoggedIn();
             });
         }
         });
