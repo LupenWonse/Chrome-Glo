@@ -223,6 +223,7 @@ function loadBoards() {
           columnId = boards[0].columns[0].id;
           chrome.storage.local.set({'boards' : boards}, function(){
               createMenus();
+              enableSwitcher();
           });
       }
     });
@@ -233,7 +234,11 @@ function loadBoards() {
     xhr.setRequestHeader("Postman-Token", "0978eded-d46d-4397-b16e-c2a8692763ea");
 
     xhr.send(data);
-}    
+}
+
+function enableSwitcher(){
+    chrome.browserAction.setPopup({"popup" : "boardSwitch.html"});
+}
 
 
 // Start extension

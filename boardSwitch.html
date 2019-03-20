@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <script type="text/javascript" src="boardSwitch.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <title>Choose your Glo Board</title>
+      <style>
+          body{background-color: #3d424d; color: cyan}
+          button{
+              min-width: 300px
+          }
+          img{
+              min-height: 100px;
+                  min-width : 300px
+          }
+      </style>
+    </head>
+    <body>
+        
+            <div class="container">
+                <div class="row justify-content-center m-4">
+                    <div class="column">
+                        <img src="images/glo-keif.svg">
+                    </div>
+                </div>
+                <div class="row justify-content-center m-4">
+                    <div class="column"> 
+                        Your current Glo Board: <br>
+                        <select class="custom-select" id="boardSwitcher">
+                            <option selected>Go create some boards!</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+    </body>
+  </html>
