@@ -1,5 +1,6 @@
 var userIdentificationCode;
 var loginTabId;
+var currentBoardIndex = 0;
 
 
 chrome.runtime.onMessage.addListener(
@@ -9,7 +10,13 @@ chrome.runtime.onMessage.addListener(
                 loginTabId = tab.id;
                 console.log("Created Tab : " + tab.id);
             });
-        } else {
+        } else if (request.type == "selectBoard"){
+            // Board changed
+            selectBoard(request.index);
+            createMenus();
+        }
+        
+        else {
             console.log("Message failed");
             console.log(request);
         }
@@ -58,9 +65,9 @@ function createMenus() {
     chrome.contextMenus.removeAll();
 
     var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
-    chrome.contextMenus.create({"title" : boards[0].name, "type" : "normal","parentId" : id,"contexts" : ["all"],"enabled":false});
+    chrome.contextMenus.create({"title" : boards[currentBoardIndex].name, "type" : "normal","parentId" : id,"contexts" : ["all"],"enabled":false});
     chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
-    for (let column of boards[0].columns){
+    for (let column of boards[currentBoardIndex].columns){
         chrome.contextMenus.create({"title" : "Create New Card in " + column.name, "type" : "normal","parentId" : id,"id" : column.id, "contexts" : ["all"],"onclick" : addCard});
     }
     
@@ -215,13 +222,8 @@ function loadBoards() {
       if (this.readyState === 4) {
           boards = JSON.parse(this.responseText);
           
-          // TODO Replace this with defaults
-          console.log(boards);
-          console.log(boards[0].columns);
-          console.log(boards[0].columns[0].id);
-          boardId = boards[0].id;
-          columnId = boards[0].columns[0].id;
           chrome.storage.local.set({'boards' : boards}, function(){
+              selectBoard(0);
               createMenus();
               enableSwitcher();
           });
@@ -234,6 +236,14 @@ function loadBoards() {
     xhr.setRequestHeader("Postman-Token", "0978eded-d46d-4397-b16e-c2a8692763ea");
 
     xhr.send(data);
+}
+
+function selectBoard(boardIndex){
+  // TODO Replace this with defaults
+    console.log("Board is now " + boardIndex);
+    currentBoardIndex = boardIndex;      
+    boardId = boards[currentBoardIndex].id;
+    columnId = boards[currentBoardIndex].columns[0].id;
 }
 
 function enableSwitcher(){
