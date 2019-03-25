@@ -82,12 +82,16 @@ function createMenus() {
     chrome.contextMenus.removeAll();
 
     var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
-    chrome.contextMenus.create({"title" : boards[currentBoardIndex].name, "type" : "normal","parentId" : id,"contexts" : ["all"],"enabled":false});
+    chrome.contextMenus.create({"title" : boards[currentBoardIndex].name, "type" : "normal","parentId" : id,"contexts" : ["all"],"onclick": showBoard});
     chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
     for (let column of boards[currentBoardIndex].columns){
         chrome.contextMenus.create({"title" : "Create New Card in " + column.name, "type" : "normal","parentId" : id,"id" : column.id, "contexts" : ["all"],"onclick" : addCard});
     }
     
+}
+
+function showBoard() {
+    chrome.tabs.create({"url" : 'https://app.gitkraken.com/glo/board/' + boards[currentBoardIndex].id});
 }
 
 function doLogOut() {
