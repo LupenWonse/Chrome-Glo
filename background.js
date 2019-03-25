@@ -45,7 +45,17 @@ function isUserLoggedIn() {
         if (result.access_token) {
             console.log('User is logged in');
             accessToken = result.access_token;
-            loadBoards();
+            requestBoards()
+            .then(function(request){
+                var json = JSON.parse(request.responseText);
+                return setLocalData({'boards':json});
+            })
+            .then(function(data){
+                boards = data.boards;
+                selectBoard(0);
+                createMenus();
+                enableSwitcher();
+            });
         } else {
             console.log('User is not logged in');
             accessToken = undefined;
@@ -232,33 +242,38 @@ var addToFirstBoard = function (details){
     console.log(details.selectionText);
 }
 
+// Promise Based XHR Calls
+function requestBoards(){
+    var xhr = new XMLHttpRequest();
+    
+    return new Promise(function(resolve,reject){
+        xhr.addEventListener("readystatechange", function () {
+          if (xhr.readyState === 4) {
+              resolve(xhr);
+            }
+        });
+
+        xhr.open("GET", "https://gloapi.gitkraken.com/v1/glo/boards?access_token=" + accessToken + "&fields[]=name&fields[]=columns");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.setRequestHeader("Postman-Token", "0978eded-d46d-4397-b16e-c2a8692763ea");
+        xhr.send();
+    });
+}
+
+function setLocalData(object){
+    return new Promise(function(resolve,reject){
+       chrome.storage.local.set(object,function(){
+           resolve(object);
+       }) 
+    });
+}
+
+
+
+
 // ==========
 // Basic API calls
-
-function loadBoards() {
-    var data = null;
-
-    var xhr = new XMLHttpRequest();
-
-    xhr.addEventListener("readystatechange", function () {
-      if (this.readyState === 4) {
-          boards = JSON.parse(this.responseText);
-          
-          chrome.storage.local.set({'boards' : boards}, function(){
-              selectBoard(0);
-              createMenus();
-              enableSwitcher();
-          });
-      }
-    });
-
-    xhr.open("GET", "https://gloapi.gitkraken.com/v1/glo/boards?access_token=" + accessToken + "&fields[]=name&fields[]=columns");
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.setRequestHeader("cache-control", "no-cache");
-    xhr.setRequestHeader("Postman-Token", "0978eded-d46d-4397-b16e-c2a8692763ea");
-
-    xhr.send(data);
-}
 
 function updateBoards(){
     console.log("Updating");
@@ -286,6 +301,7 @@ function updateBoards(){
 function selectBoard(boardIndex){
   // TODO Replace this with defaults
     console.log("Board is now " + boardIndex);
+    console.log(boards[currentBoardIndex]);
     currentBoardIndex = boardIndex;      
     boardId = boards[currentBoardIndex].id;
 }
