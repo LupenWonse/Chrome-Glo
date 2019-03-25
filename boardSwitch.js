@@ -16,10 +16,10 @@ window.onload = function() {
                 boardSwitcher.appendChild(option);
             }
         } else {
-            
+             // We do not have boards 
         }
-        // We do not have boards
         updateBoard();
+        chrome.runtime.sendMessage({"type":"updateBoards"});
     });
     
     boardSwitcher.addEventListener("change",function(event){
@@ -45,8 +45,4 @@ function updateBoard(){
         }
         //        document.getElementById("mainText").innerHTML = boards[boardSwitcher.selectedIndex].name;
     });
-}
-
-window.onunload = function() {
-    console.log("ONUNLOAD");
 }

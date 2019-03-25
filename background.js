@@ -29,7 +29,9 @@ chrome.runtime.onMessage.addListener(
             selectBoard(request.index);
             createMenus();
         }
-        
+        else if (request.type == "updateBoards"){
+            updateBoards();
+        }
         else {
             console.log("Message failed");
             console.log(request);
@@ -243,6 +245,29 @@ function loadBoards() {
               createMenus();
               enableSwitcher();
           });
+      }
+    });
+
+    xhr.open("GET", "https://gloapi.gitkraken.com/v1/glo/boards?access_token=" + accessToken + "&fields[]=name&fields[]=columns");
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.setRequestHeader("cache-control", "no-cache");
+    xhr.setRequestHeader("Postman-Token", "0978eded-d46d-4397-b16e-c2a8692763ea");
+
+    xhr.send(data);
+}
+
+function updateBoards(){
+    console.log("Updating");
+    var data = null;
+
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener("readystatechange", function () {
+      if (this.readyState === 4) {
+          boards = JSON.parse(this.responseText);
+          
+          chrome.storage.local.set({'boards' : boards});
+          console.log(boards);
       }
     });
 
