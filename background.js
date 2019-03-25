@@ -1,6 +1,14 @@
-var userIdentificationCode;
+//var userIdentificationCode;
 var loginTabId;
 var currentBoardIndex = 0;
+
+// Start extension
+    const clientId = "aajdmgmjv5myynpbkgcg";
+    var boardId = "";
+    var accessToken = null;
+    var boards = null;
+
+    isUserLoggedIn(); // If yes this will load the boards
 
 
 function startLogin(){
@@ -78,7 +86,7 @@ function redirectToExtension (details) {
     window.location.href = 'chrome-extension://index.html';
     
     if(params.has('code')){
-        userIdentificationCode = params.get('code');
+//        userIdentificationCode = params.get('code');
         getAccessToken(params.get('code'));
         chrome.tabs.remove(loginTabId, function(){
             console.log("Removing Tab : " + loginTabId);
@@ -119,8 +127,7 @@ function doLogOut() {
 // ======================
 // Context Menu Callbacks
 
-var addCard = function (click) {
-    
+var addCard = function (click) {    
     chrome.tabs.captureVisibleTab(undefined,{"format" : 'png'},function(dataURL){
         chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
             // Image source to be captured
@@ -262,8 +269,6 @@ function getLocalData(key){
 }
 
 
-
-
 // ==========
 // Basic API calls
 
@@ -303,14 +308,6 @@ function enableSwitcher(){
 }
 
 
-// Start extension
-    const clientId = "aajdmgmjv5myynpbkgcg";
-    var boardId = "";
-    var accessToken = null;
-    var boards = null;
-
-    isUserLoggedIn(); // If yes this will load the boards
-
    
 function getAccessToken (code){
         // Build Http Request For Access Token
@@ -335,3 +332,4 @@ function getAccessToken (code){
         xhr.setRequestHeader("Postman-Token", "6c9895b2-01cb-456c-9871-8dca069caf1f");
         xhr.send(data);
 }
+
