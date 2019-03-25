@@ -41,26 +41,28 @@ chrome.runtime.onMessage.addListener(
 
 // Check for user authentication
 function isUserLoggedIn() {
-    chrome.storage.local.get(['access_token'], function(result){
-        if (result.access_token) {
-            console.log('User is logged in');
-            accessToken = result.access_token;
-            requestBoards()
-            .then(function(request){
-                var json = JSON.parse(request.responseText);
-                return setLocalData({'boards':json});
-            })
-            .then(function(data){
-                boards = data.boards;
-                selectBoard(0);
-                createMenus();
-                enableSwitcher();
-            });
-        } else {
-            console.log('User is not logged in');
-            accessToken = undefined;
-            doLogOut();
-        }
+    getLocalData('access_token')
+    .then(function(token){
+        console.log("Found Token : " + token);
+        accessToken = token;
+        return setLocalData({"accessToken" : token});
+    },function(reason){
+        accessToken = undefined;
+        doLogOut();
+        return Promise.reject(reason);
+    }).then(requestBoards)
+    .then(function(request){
+        var json = JSON.parse(request.responseText);
+        return setLocalData({'boards':json});
+    })
+    .then(function(data){
+        boards = data.boards;
+        selectBoard(0);
+        createMenus();
+        enableSwitcher();
+    })
+    .catch(function(reason){
+        console.log(reason);
     });
 }
 
