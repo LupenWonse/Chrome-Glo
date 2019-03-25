@@ -10,11 +10,21 @@ function startLogin(){
             });
 }
 
+function logout(){
+    chrome.storage.local.remove('access_token',function(){
+       console.log("Removed");
+        isUserLoggedIn(); 
+    });
+}
+
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse){
         if (request.type == "startLogin"){
             startLogin();
-        } else if (request.type == "selectBoard"){
+        } else if (request.type == "logout"){
+            logout();
+        }
+        else if (request.type == "selectBoard"){
             // Board changed
             selectBoard(request.index);
             createMenus();
@@ -36,6 +46,7 @@ function isUserLoggedIn() {
             loadBoards();
         } else {
             console.log('User is not logged in');
+            accessToken = undefined;
             doLogOut();
         }
     });
@@ -79,6 +90,7 @@ function createMenus() {
 
 function doLogOut() {
     console.log("Disabling Context Menus");
+    chrome.browserAction.setPopup({"popup" : "login.html"});
     chrome.contextMenus.removeAll();
     chrome.contextMenus.create({"title" : "Login to Glo Board", "onclick" : function () {
         startLogin();

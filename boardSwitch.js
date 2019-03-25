@@ -27,6 +27,11 @@ window.onload = function() {
             updateBoard();
         })
     })
+    
+    document.querySelector('button').addEventListener('click', function() {
+        chrome.runtime.sendMessage({"type":"logout"});
+        window.location.href = "/login.html";
+    }); 
 };
 
 function updateBoard(){
