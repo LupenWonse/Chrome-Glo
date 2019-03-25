@@ -10,6 +10,8 @@
      "permissions" : ["background","webRequest", "*://app.gitkraken.com/*","*://api.gitkraken.com/*","tabs","storage","contextMenus","activeTab"],
     "background": {
       "scripts": [
+          "helpers.js",
+          "gloAPI.js",
         "background.js"
       ],
       "persistent": true
