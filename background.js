@@ -3,13 +3,17 @@ var loginTabId;
 var currentBoardIndex = 0;
 
 
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse){
-        if (request.type == "startLogin"){
-            chrome.tabs.create({url:'https://app.gitkraken.com/oauth/authorize?response_type=code&client_id=aajdmgmjv5myynpbkgcg&scope=board:write&state=qwert12345'},function(tab){
+function startLogin(){
+    chrome.tabs.create({url:'https://app.gitkraken.com/oauth/authorize?response_type=code&client_id=aajdmgmjv5myynpbkgcg&scope=board:write&state=qwert12345'},function(tab){
                 loginTabId = tab.id;
                 console.log("Created Tab : " + tab.id);
             });
+}
+
+chrome.runtime.onMessage.addListener(
+    function (request, sender, sendResponse){
+        if (request.type == "startLogin"){
+            startLogin();
         } else if (request.type == "selectBoard"){
             // Board changed
             selectBoard(request.index);
@@ -77,7 +81,7 @@ function doLogOut() {
     console.log("Disabling Context Menus");
     chrome.contextMenus.removeAll();
     chrome.contextMenus.create({"title" : "Login to Glo Board", "onclick" : function () {
-        chrome.tabs.create({url:'https://app.gitkraken.com/oauth/authorize?response_type=code&client_id' + clientId + '=&scope=board:write&state=qwert12345'});
+        startLogin();
         }
     });
 }
@@ -243,7 +247,6 @@ function selectBoard(boardIndex){
     console.log("Board is now " + boardIndex);
     currentBoardIndex = boardIndex;      
     boardId = boards[currentBoardIndex].id;
-    columnId = boards[currentBoardIndex].columns[0].id;
 }
 
 function enableSwitcher(){
@@ -254,7 +257,6 @@ function enableSwitcher(){
 // Start extension
     const clientId = "aajdmgmjv5myynpbkgcg";
     var boardId = "";
-    var columnId = "";
     var accessToken = null;
     var boards = null;
 
