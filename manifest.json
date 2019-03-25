@@ -7,11 +7,14 @@
         "default_title": "Login to Glo Boards",
         "default_popup": "login.html"
     },
-     "permissions" : ["background","webRequest", "*://app.gitkraken.com/*","*://api.gitkraken.com/*","tabs","storage","contextMenus"],
+     "permissions" : ["background","webRequest", "*://app.gitkraken.com/*","*://api.gitkraken.com/*","tabs","storage","contextMenus","activeTab"],
     "background": {
       "scripts": [
         "background.js"
       ],
       "persistent": true
-    }
+    },
+     "icons": { "32": "images/keif32.png",
+           "64": "images/keif64.png",
+          "128": "images/keif128.png" }
   }
