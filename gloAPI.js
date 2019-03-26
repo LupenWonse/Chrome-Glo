@@ -1,3 +1,24 @@
+function postCard(card) {
+    var xhr = new XMLHttpRequest();
+    
+    return new Promise (function(resolve, reject){
+        
+        xhr.withCredentials = false;
+        xhr.open("POST", "https://gloapi.gitkraken.com/v1/glo/boards/" + boardId + "/cards/?access_token=" + accessToken);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.setRequestHeader("cache-control", "no-cache");
+        xhr.setRequestHeader("Postman-Token", "98beb5ef-eff6-4980-92cd-66ca9834aea2");
+        xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4) {
+                    resolve(JSON.parse(xhr.responseText));
+                } else {
+                    reject(xhr.responseText);
+                }
+        xhr.send(data); 
+        });
+    });
+}
+
 function addCard (click) {    
     chrome.tabs.captureVisibleTab(undefined,{"format" : 'png'},function(dataURL){
         chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
