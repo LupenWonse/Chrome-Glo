@@ -15,8 +15,5 @@
         "background.js"
       ],
       "persistent": true
-    },
-     "icons": { "32": "images/keif32.png",
-           "64": "images/keif64.png",
-          "128": "images/keif128.png" }
+    }
   }
