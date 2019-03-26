@@ -1,4 +1,6 @@
 function postCard(card) {
+    console.log("CARD");
+    console.log(card);
     var xhr = new XMLHttpRequest();
     
     return new Promise (function(resolve, reject){
@@ -36,53 +38,55 @@ function postAttachment(cardId, blob){
     });          
 }
 
-function addCard (click) {  
-    console.log("addCard called");
-    chrome.tabs.captureVisibleTab(undefined,{"format" : 'png'},function(dataURL){
-        chrome.tabs.query({"active" : true, "currentWindow" : true}, function(tab){
-            // Image source to be captured
-            var imageSource;
-            
-            // Set card properties
-            var card = {};
-            card.description = {};
-            card.position = 0;
-            card.column_id = click.menuItemId;
-            
-            if (click.selectionText){
-                card.name = click.selectionText;
-            } else {
-                card.name = tab[0].title;
-            }
-            
-            if (click.mediaType == "image") {
-                imageSource = click.srcUrl; 
-            } else {
-                imageSource = dataURL;
-            }
-            var createdCardId;
-            
-            card.description.text = " \n Created by Chrome Glo \n" + tab[0].url;
-            //var tabUrl = tab[0].url;
-        
-            postCard(JSON.stringify(card))
-            .then(function(responseData){
-               createdCardId = responseData.id;})
-            .then(function(){
-                return fetch(imageSource)})
-            .then(res => res.blob())
-            .then(function(blob){
-                return postAttachment(createdCardId, blob);
-            })
-            .then(function(attachmentData){
-                var comment = 'Card created by Glo Chrome extension \n';
-                comment = comment + '[Original web-page](' + tab[0].url +')\n';
-                comment = comment + '![image](' + attachmentData.url + ')';
-                addComment(boardId, createdCardId, comment);
-            }).catch(function(error){
-                console.error("Add Card Failed : " + error);
-            });
+function addCard (click) {
+    var card = {};
+    card.description = {};
+    card.position = 0;
+    card.column_id = click.menuItemId;
+    
+    var currentTab;
+    var createdCardId;
+    
+    var promise = getCurrentTab().then(tab => {
+        currentTab = tab;
+        if (click.selectionText){
+            card.name = click.selectionText;
+        } else {
+            card.name = currentTab.title;
+        }
+        card.description.text = " \n Created by Chrome Glo \n" + currentTab.url; 
+    });
+    
+    if (click.mediaType == "image"){
+        imageSource = click.srcUrl;
+    } else {
+        promise.then(getScreenshot)
+        .then(function(dataURL){
+            imageSource = dataURL;
         });
+    }
+
+    promise.then(function(){
+        return postCard(JSON.stringify(card));
+    })
+    .then(function(responseData){
+        console.log(responseData);
+       createdCardId = responseData.id;
+    })
+    .then(function(){
+        return fetch(imageSource)
+    })
+    .then(res => res.blob())
+    .then(function(blob){
+        return postAttachment(createdCardId, blob);
+    })
+    .then(function(attachmentData){
+        var comment = 'Card created by Glo Chrome extension \n';
+        comment = comment + '[Original web-page](' + currentTab.url +')\n';
+        comment = comment + '![image](' + attachmentData.url + ')';
+        addComment(boardId, createdCardId, comment);
+    }).catch(function(error){
+        console.error("Add Card Failed : " + error);
     });
 }
 
