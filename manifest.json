@@ -1,6 +1,6 @@
  {
     "name": "Chrome Glo",
-    "version": "0.1",
+    "version": "0.2",
     "description": "Adds context menus for quickly creating cards in Glo Boards from the current page content.",
     "manifest_version": 2,
     "browser_action": {
