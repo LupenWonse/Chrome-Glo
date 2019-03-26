@@ -60,11 +60,8 @@ function isUserLoggedIn() {
         console.log("Found Token : " + token);
         accessToken = token;
         return setLocalData({"accessToken" : token});
-    },function(reason){
-        accessToken = undefined;
-        doLogOut();
-        return Promise.reject(reason);
-    }).then(requestBoards)
+    })
+    .then(requestBoards)
     .then(function(request){
         var json = JSON.parse(request.responseText);
         return setLocalData({'boards':json});
@@ -76,6 +73,8 @@ function isUserLoggedIn() {
         enableSwitcher();
     })
     .catch(function(reason){
+        accessToken = undefined;
+        doLogOut();
         console.log(reason);
     });
 }
