@@ -13,13 +13,11 @@ var currentBoardIndex = 0;
 function startLogin(){
     chrome.tabs.create({url:'https://app.gitkraken.com/oauth/authorize?response_type=code&client_id=aajdmgmjv5myynpbkgcg&scope=board:write&state=qwert12345'},function(tab){
                 loginTabId = tab.id;
-                console.log("Created Tab : " + tab.id);
             });
 }
 
 function logout(){
     chrome.storage.local.remove('access_token',function(){
-       console.log("Removed");
         isUserLoggedIn(); 
     });
 }
@@ -37,11 +35,15 @@ chrome.runtime.onMessage.addListener(
             createMenus();
         }
         else if (request.type == "updateBoards"){
-            updateBoards();
+            requestBoards().then(function(request){
+                return JSON.parse(request.responseText);
+            }).then(function(json){
+                boards = json;
+                chrome.storage.local.set({'boards' : boards});
+            })
         }
         else {
-            console.log("Message failed");
-            console.log(request);
+            console.error("Message failed : " + request);
         }
     }
 )
@@ -147,30 +149,6 @@ function requestBoards(){
 
 // ==========
 // Basic API calls
-
-function updateBoards(){
-    console.log("Updating");
-    var data = null;
-
-    var xhr = new XMLHttpRequest();
-
-    xhr.addEventListener("readystatechange", function () {
-      if (this.readyState === 4) {
-          boards = JSON.parse(this.responseText);
-          
-          chrome.storage.local.set({'boards' : boards});
-          console.log(boards);
-      }
-    });
-
-    xhr.open("GET", "https://gloapi.gitkraken.com/v1/glo/boards?access_token=" + accessToken + "&fields[]=name&fields[]=columns");
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.setRequestHeader("cache-control", "no-cache");
-    xhr.setRequestHeader("Postman-Token", "0978eded-d46d-4397-b16e-c2a8692763ea");
-
-    xhr.send(data);
-}
-
 function selectBoard(boardIndex){
   // TODO Replace this with defaults
     console.log("Board is now " + boardIndex);
