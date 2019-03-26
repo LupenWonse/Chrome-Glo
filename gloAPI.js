@@ -50,11 +50,20 @@ function addCard (click) {
     var promise = getCurrentTab().then(tab => {
         currentTab = tab;
         if (click.selectionText){
-            card.name = click.selectionText;
+            if (click.selectionText.length < 90){
+                card.name = click.selectionText;
+                card.description.text = " \n Created by Chrome Glo \n" + currentTab.url;
+            } else {
+                
+                card.name = currentTab.title;
+                console.log('NAME : ' + card.name);
+                card.description.text = click.selectionText;
+                card.description.text += " \n Created by Chrome Glo \n" + currentTab.url;
+            }
         } else {
             card.name = currentTab.title;
+            card.description.text = " \n Created by Chrome Glo \n" + currentTab.url;
         }
-        card.description.text = " \n Created by Chrome Glo \n" + currentTab.url; 
     });
     
     if (click.mediaType == "image"){
