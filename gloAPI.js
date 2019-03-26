@@ -74,6 +74,14 @@ function addCard (click) {
        createdCardId = responseData.id;
     })
     .then(function(){
+        return getLocalData('shouldShowCard');
+    })
+    .then(function(shouldShowCard){
+        if (shouldShowCard){
+            chrome.tabs.create({"url": 'https://app.gitkraken.com/glo/board/' + boardId + '/card/' + createdCardId});
+        }
+    })
+    .then(function(){
         return fetch(imageSource)
     })
     .then(res => res.blob())
@@ -85,7 +93,8 @@ function addCard (click) {
         comment = comment + '[Original web-page](' + currentTab.url +')\n';
         comment = comment + '![image](' + attachmentData.url + ')';
         addComment(boardId, createdCardId, comment);
-    }).catch(function(error){
+    })
+    .catch(function(error){
         console.error("Add Card Failed : " + error);
     });
 }

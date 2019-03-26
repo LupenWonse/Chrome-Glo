@@ -1,10 +1,11 @@
 <html>
     <head>
         <script type="text/javascript" src="boardSwitch.js"></script>
+        <script type="text/javascript" src="helpers.js"></script>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
       <title>Choose your Glo Board</title>
       <style>
-          body{background-color: #3d424d; color: cyan}
+          body{background-color: #3d424d; color: lightblue}
           button{
               min-width: 300px
           }
@@ -32,6 +33,12 @@
                 <div class="row justify-content-center m-4">
                     <div class="column">
                         <button type="button" class="btn btn-outline-info btn-block">Log Out</button>
+                    </div>
+                </div>
+                <div class="row justify-content-center m-4">
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="showCardCheck">
+                        <label class="form-check-label" for="exampleCheck1">Show created cards in a new tab</label>
                     </div>
                 </div>
             </div>
