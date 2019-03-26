@@ -1,3 +1,8 @@
+chrome.runtime.onInstalled.addListener(function(){
+    setLocalData({'shouldShowCard' : false})
+        .then(startLogin);
+})
+
 var loginTabId;
 var currentBoardIndex = 0;
 
