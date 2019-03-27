@@ -15,5 +15,12 @@
         "background.js"
       ],
       "persistent": true
-    }
+    },
+     "icons":{
+         "512" : "images/ChromeGlo512.png",
+         "256" : "images/ChromeGlo256.png",
+         "128" : "images/ChromeGlo128.png",
+         "64" : "images/ChromeGlo64.png",
+         "32" : "images/ChromeGlo32.png"
+     }
   }
