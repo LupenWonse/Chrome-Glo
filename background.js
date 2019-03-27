@@ -105,12 +105,14 @@ function createMenus() {
     console.log("Enabling All Context Menus");
     chrome.contextMenus.removeAll();
 
-    var id = chrome.contextMenus.create({"title" : "Glo Boards", "contexts" : ["all"]});
-    chrome.contextMenus.create({"title" : boards[currentBoardIndex].name, "type" : "normal","parentId" : id,"contexts" : ["all"],"onclick": showBoard});
+    var id = chrome.contextMenus.create({"title" : "New Glo Card", "contexts" : ["all"]});
+    chrome.contextMenus.create({"title" : boards[currentBoardIndex].name, "type" : "normal","parentId" : id,"contexts" : ["all"],'enabled' : false ,"onclick": showBoard});
     chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
     for (let column of boards[currentBoardIndex].columns){
-        chrome.contextMenus.create({"title" : "Create New Card in " + column.name, "type" : "normal","parentId" : id,"id" : column.id, "contexts" : ["all"],"onclick" : addCard});
+        chrome.contextMenus.create({"title" : column.name , "type" : "normal","parentId" : id,"id" : column.id, "contexts" : ["all"],"onclick" : addCard});
     }
+    chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
+    chrome.contextMenus.create({"title" : 'Open ' + boards[currentBoardIndex].name + ' in Glo', "type" : "normal","parentId" : id,"contexts" : ["all"],'enabled' : true ,"onclick": showBoard});
     
 }
 
