@@ -13,8 +13,10 @@ The main feature of Chrome Glo is to create a new card on your Glo Board based o
 2. When you are visiting a webpage right-click anywhere on the page and choose
 New Glo Card -> "Your Column of Choice". You can right-click on a selected text or an image.
 3. That's it, Chrome Glo will now create a new card for you and post it on your Glo Board.
-![Screenshot2](/Screenshot2.png){:width = "50%"; margin-left: auto;
-  margin-right: auto}
+
+<p align="center">
+  <img width="50%" src="Screenshot2.png">
+</p>
 
 Of course there is more to it and Chrome Glo will fill out your card based on your selection.
 ### If you made no selection
@@ -39,8 +41,10 @@ Of course there is more to it and Chrome Glo will fill out your card based on yo
 
 ## Edit cards automatically after creation
 Chrome Glo offers an option to edit the generated cards right after they have been created. Open the board switcher by clicking on the Chrome Glo icon on the toolbar. You can check or uncheck "Show created cards in new tab" option. If this option is checked whenever you create a card, Chrome Glo will display it on the Glo Boards web-app.
-![Screenshot1](/Screenshot1.png){:width = "50%" :margin-left = auto;
-  :margin-right = auto}
+
+<p align="center">
+  <img width="50%" src="Screenshot1.png">
+</p>
 
 ## Design Principles
 ### 1. Keep it simple

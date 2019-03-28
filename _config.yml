@@ -1,3 +1,25 @@
 theme: jekyll-theme-slate
 title: [Chrome Glo]
 description: [A Chrome extension for Glo Boards]
+
+
+# baseurl: "/Chrome-Glo" # the subpath of your site, e.g. /blog
+url: "https://lupenwonse.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+github_username:  LupenWonse
+repository: "LupenWonse/Chrome-Glo"
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-feed
+
+# Exclude from processing.
+# The following items will not be processed, by default. Create a custom list
+# to override the default setting.
+# exclude:
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules
+#   - vendor/bundle/
+#   - vendor/cache/
+#   - vendor/gems/
+#   - vendor/ruby/
