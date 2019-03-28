@@ -124,7 +124,7 @@ function doLogOut() {
     console.log("Disabling Context Menus");
     chrome.browserAction.setPopup({"popup" : "login.html"});
     chrome.contextMenus.removeAll();
-    chrome.contextMenus.create({"title" : "Login to Glo Board", "onclick" : function () {
+    chrome.contextMenus.create({"title" : "Login to Glo Board", "contexts" : ["all"], "onclick" : function () {
         startLogin();
         }
     });
