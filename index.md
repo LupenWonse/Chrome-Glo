@@ -1,18 +1,20 @@
-# Chrome Glo - A Google Chrome extension for Glo Boards
+## Story so far
 This little Chrome extension is created as an entry for the Glo API contest. Git Kraken is an amazing piece of software. It is my go-to GUI for git. I especially love the aesthetics of the software and the sense of humor the dev team displays.
 When I first read about the Glo Boards API contest, I realized that I was missing out on this new feature that was hidden in plain sight.
 Well I had some free time in my hand and an itch to create and learn. So here I am, writing about Chrome Glo, my first ever Chrome extension.
 
-## What it does?
+## What it does
 Chrome Glo creates Cards on your Glo Board using the web page you are currently visiting.
 
-## How to use it?
+## How to use it
 The main feature of Chrome Glo is to create a new card on your Glo Board based on the webpage you are currently visiting. The instructions are very simple
 1. Install the extension and login to your Glo Board account
 2. Click the Chrome Glo icon on the toolbar and use the drop-down menu to choose the Board you want to work with.
 2. When you are visiting a webpage right-click anywhere on the page and choose
 New Glo Card -> "Your Column of Choice". You can right-click on a selected text or an image.
 3. That's it, Chrome Glo will now create a new card for you and post it on your Glo Board.
+![Screenshot2](/Screenshot2.png){:width = "50%"; margin-left: auto;
+  margin-right: auto}
 
 Of course there is more to it and Chrome Glo will fill out your card based on your selection.
 ### If you made no selection
@@ -37,7 +39,8 @@ Of course there is more to it and Chrome Glo will fill out your card based on yo
 
 ## Edit cards automatically after creation
 Chrome Glo offers an option to edit the generated cards right after they have been created. Open the board switcher by clicking on the Chrome Glo icon on the toolbar. You can check or uncheck "Show created cards in new tab" option. If this option is checked whenever you create a card, Chrome Glo will display it on the Glo Boards web-app.
-![Screenshot1](/Screenshot1.png){:width="50%"}
+![Screenshot1](/Screenshot1.png){:width = "50%" :margin-left = auto;
+  :margin-right = auto}
 
 ## Design Principles
 ### 1. Keep it simple
@@ -49,7 +52,7 @@ The user should ideally login once to the Glo Boards. A typical user would switc
 
 ## How to Install
 You can install Chrome Glo in two ways:
-### Using .crx file
+### Preffered Method - Using .crx file
 1. Download the attached .crx file from the [latest release](https://github.com/LupenWonse/Chrome-Glo/releases/latest)
 2. Open Chrome and navigate to [chrome://extension](chrome://extensions)
 3. Enable "Developer Mode" by using the switch in the top header
