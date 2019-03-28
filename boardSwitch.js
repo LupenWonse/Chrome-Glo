@@ -28,6 +28,14 @@ window.onload = function() {
         })
     })
     
+    document.getElementById('showCardCheck').addEventListener('change',function(event){
+        chrome.storage.local.set({'shouldShowCard' : event.target.checked});
+    });
+    
+    getLocalData('shouldShowCard').then(shouldShowCard => {
+        document.getElementById('showCardCheck').checked = shouldShowCard;
+    });
+    
     document.querySelector('button').addEventListener('click', function() {
         chrome.runtime.sendMessage({"type":"logout"});
         window.location.href = "/login.html";

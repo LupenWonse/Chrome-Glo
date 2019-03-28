@@ -50,11 +50,20 @@ function addCard (click) {
     var promise = getCurrentTab().then(tab => {
         currentTab = tab;
         if (click.selectionText){
-            card.name = click.selectionText;
+            if (click.selectionText.length < 90){
+                card.name = click.selectionText;
+                card.description.text = " \n Created by Chrome Glo \n" + currentTab.url;
+            } else {
+                
+                card.name = currentTab.title;
+                console.log('NAME : ' + card.name);
+                card.description.text = click.selectionText;
+                card.description.text += " \n Created by Chrome Glo \n" + currentTab.url;
+            }
         } else {
             card.name = currentTab.title;
+            card.description.text = " \n Created by Chrome Glo \n" + currentTab.url;
         }
-        card.description.text = " \n Created by Chrome Glo \n" + currentTab.url; 
     });
     
     if (click.mediaType == "image"){
@@ -74,6 +83,14 @@ function addCard (click) {
        createdCardId = responseData.id;
     })
     .then(function(){
+        return getLocalData('shouldShowCard');
+    })
+    .then(function(shouldShowCard){
+        if (shouldShowCard){
+            chrome.tabs.create({"url": 'https://app.gitkraken.com/glo/board/' + boardId + '/card/' + createdCardId});
+        }
+    })
+    .then(function(){
         return fetch(imageSource)
     })
     .then(res => res.blob())
@@ -85,7 +102,8 @@ function addCard (click) {
         comment = comment + '[Original web-page](' + currentTab.url +')\n';
         comment = comment + '![image](' + attachmentData.url + ')';
         addComment(boardId, createdCardId, comment);
-    }).catch(function(error){
+    })
+    .catch(function(error){
         console.error("Add Card Failed : " + error);
     });
 }
