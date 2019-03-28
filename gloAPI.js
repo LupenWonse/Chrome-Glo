@@ -1,6 +1,4 @@
 function updateCard(card) {
-    console.log("CARD");
-    console.log(card);
     var xhr = new XMLHttpRequest();
     
     return new Promise (function(resolve, reject){
@@ -8,7 +6,6 @@ function updateCard(card) {
         xhr.withCredentials = false;
         xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
-            console.log("RESOLVE");
             resolve(JSON.parse(xhr.responseText));
         }
         }); 
@@ -20,8 +17,6 @@ function updateCard(card) {
 }
 
 function postCard(card) {
-    console.log("CARD");
-    console.log(card);
     var xhr = new XMLHttpRequest();
     
     return new Promise (function(resolve, reject){
@@ -29,7 +24,6 @@ function postCard(card) {
         xhr.withCredentials = false;
         xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
-            console.log("RESOLVE");
             resolve(JSON.parse(xhr.responseText));
         }
         }); 
@@ -78,7 +72,6 @@ function addCard (click) {
             } else {
                 
                 card.name = currentTab.title;
-                console.log('NAME : ' + card.name);
                 card.description.text = click.selectionText;
             }
         } else {
@@ -101,7 +94,6 @@ function addCard (click) {
         return postCard(JSON.stringify(card));
     })
     .then(function(responseData){
-        console.log(responseData);
        createdCard = responseData;
     })
     .then(function(){
@@ -130,9 +122,7 @@ function addCard (click) {
     });
 }
 
-function addComment(boardIde, cardId, comment){
-    console.log("Adding Comment : To Board : " + boardId + " to Card: " + cardId + " : " + comment);
-    
+function addComment(boardIde, cardId, comment){    
     var commentData = {text: comment};
     
     var xhr = new XMLHttpRequest();
@@ -140,8 +130,6 @@ function addComment(boardIde, cardId, comment){
     xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
             var attachmentData = JSON.parse(this.responseText);
-            console.log("Adding Comment:");
-            console.log(this.responseText);
         }
     });
     
@@ -149,6 +137,5 @@ function addComment(boardIde, cardId, comment){
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.setRequestHeader("cache-control", "no-cache");
         xhr.setRequestHeader("Postman-Token", "98beb5ef-eff6-4980-92cd-66ca9834aea2");
-    console.log(commentData);
         xhr.send(JSON.stringify(commentData));
 }
