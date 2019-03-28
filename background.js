@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener(
 function isUserLoggedIn() {
     getLocalData('access_token')
     .then(function(token){
-        console.log("Found Token : " + token);
+        //console.log("Found Token : " + token);
         accessToken = token;
         return setLocalData({"accessToken" : token});
     })
@@ -75,7 +75,7 @@ function isUserLoggedIn() {
     .catch(function(reason){
         accessToken = undefined;
         doLogOut();
-        console.log(reason);
+        console.error(reason);
     });
 }
 
@@ -93,7 +93,7 @@ function redirectToExtension (details) {
     if(params.has('code')){
         getAccessToken(params.get('code'));
         chrome.tabs.remove(loginTabId, function(){
-            console.log("Removing Tab : " + loginTabId);
+            //console.log("Removing Tab : " + loginTabId);
             loginTabId = undefined;
         });
     }    
@@ -102,7 +102,7 @@ function redirectToExtension (details) {
 // =========
 // Initialization based on auth state
 function createMenus() {
-    console.log("Enabling All Context Menus");
+    //console.log("Enabling All Context Menus");
     chrome.contextMenus.removeAll();
 
     var id = chrome.contextMenus.create({"title" : "New Glo Card", "contexts" : ["all"]});
@@ -121,10 +121,10 @@ function showBoard() {
 }
 
 function doLogOut() {
-    console.log("Disabling Context Menus");
+    //console.log("Disabling Context Menus");
     chrome.browserAction.setPopup({"popup" : "login.html"});
     chrome.contextMenus.removeAll();
-    chrome.contextMenus.create({"title" : "Login to Glo Board", "onclick" : function () {
+    chrome.contextMenus.create({"title" : "Login to Glo Board", "contexts" : ["all"], "onclick" : function () {
         startLogin();
         }
     });
@@ -156,9 +156,8 @@ function requestBoards(){
 // ==========
 // Basic API calls
 function selectBoard(boardIndex){
-  // TODO Replace this with defaults
-    console.log("Board is now " + boardIndex);
-    console.log(boards[currentBoardIndex]);
+    //console.log("Board is now " + boardIndex);
+    //console.log(boards[currentBoardIndex]);
     currentBoardIndex = boardIndex;      
     boardId = boards[currentBoardIndex].id;
 }
@@ -178,7 +177,7 @@ function getAccessToken (code){
         xhr.withCredentials = true;
         xhr.addEventListener("readystatechange", function () {
         if (this.readyState === 4) {
-            console.log(JSON.parse(this.responseText));
+            //console.log(JSON.parse(this.responseText));
             var results = JSON.parse(this.responseText);
             chrome.storage.local.set(results, function(){
                 isUserLoggedIn();
