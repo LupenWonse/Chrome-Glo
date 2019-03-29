@@ -1,6 +1,6 @@
 theme: jekyll-theme-slate
-title: [Chrome Glo]
-description: [A Chrome extension for Glo Boards]
+title: Chrome Glo
+description: A Chrome extension for Glo Boards
 
 
 # baseurl: "/Chrome-Glo" # the subpath of your site, e.g. /blog
