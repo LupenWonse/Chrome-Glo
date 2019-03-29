@@ -1,7 +1,7 @@
  {
     "name": "Chrome Glo",
     "key" : "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlfW0TNgX0HdSowRuahDf4okCqmP9Icbel7SWR3Sffpil3n2okM3Xnu8fiAi2+K92M4XaXfYu5L+S2thF7SCNCL3aC6sDlVj/pnNJy9mTAAwUiyDt6CWNwnWoyXHTMY9lApU/DPKo7nFIAsg3g2KNxAaA7iAgkEqLvIAv2R5iH4u08CUIxnimLv4VbyivPlYFw3mj1dyTrIZOK/ZGkY+dtEwfdc+/FzywZSmX4JLuwfmm70gt3scYailzgI4H6Csm7YF0q5iIddSbrU4VNsdhdyORC+Buema+ieYaCmWqC9m1Gk7KdivWG6DNxJlCnSslfA1hHazuoOUoC0ABnHrT/wIDAQAB",
-    "version": "1.1",
+    "version": "1.2",
     "description": "Adds context menus for quickly creating cards in Glo Boards from the current page content.",
     "manifest_version": 2,
     "browser_action": {

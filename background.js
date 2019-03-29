@@ -68,14 +68,20 @@ function isUserLoggedIn() {
     })
     .then(function(data){
         boards = data.boards;
-        selectBoard(0);
+        return getLocalData('currentBoardIndex');
+    })
+    .then(function(currentBoardIndex){
+        return selectBoard(currentBoardIndex);
+    },function(){
+        return selectBoard(0);
+    })
+    .then(function(){
         createMenus();
         enableSwitcher();
     })
     .catch(function(reason){
         accessToken = undefined;
         doLogOut();
-        console.error(reason);
     });
 }
 
@@ -104,7 +110,6 @@ function redirectToExtension (details) {
 function createMenus() {
     //console.log("Enabling All Context Menus");
     chrome.contextMenus.removeAll();
-
     var id = chrome.contextMenus.create({"title" : "New Glo Card", "contexts" : ["all"]});
     chrome.contextMenus.create({"title" : boards[currentBoardIndex].name, "type" : "normal","parentId" : id,"contexts" : ["all"],'enabled' : false ,"onclick": showBoard});
     chrome.contextMenus.create({"type" : "separator","parentId" : id,"contexts" : ["all"]});
@@ -156,10 +161,12 @@ function requestBoards(){
 // ==========
 // Basic API calls
 function selectBoard(boardIndex){
-    //console.log("Board is now " + boardIndex);
-    //console.log(boards[currentBoardIndex]);
-    currentBoardIndex = boardIndex;      
-    boardId = boards[currentBoardIndex].id;
+    currentBoardIndex = boardIndex;
+    return setLocalData({currentBoardIndex : boardIndex})
+    .then(function(){
+        boardId = boards[currentBoardIndex].id;
+    });
+    
 }
 
 function enableSwitcher(){
