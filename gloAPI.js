@@ -113,6 +113,8 @@ function addCard (click) {
     })
     .then(function(attachmentData){
         createdCard.description.text = '![image](' + attachmentData.url + ')\n' + createdCard.description.text;
+    },function(){
+        createdCard.description.text = '![selectedImage](' + imageSource + ')\n' + createdCard.description.text;
     })
     .then(function(){
         updateCard(createdCard);
