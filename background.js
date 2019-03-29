@@ -82,7 +82,6 @@ function isUserLoggedIn() {
     .catch(function(reason){
         accessToken = undefined;
         doLogOut();
-        console.error(reason);
     });
 }
 
